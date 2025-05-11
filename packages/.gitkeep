@@ -1,0 +1,3 @@
+# 此目录用于存放离线安装所需的依赖包
+# 可以使用以下命令下载依赖包到此目录：
+# pip download -d . -r ../requirements.txt

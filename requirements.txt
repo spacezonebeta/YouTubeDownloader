@@ -1,0 +1,6 @@
+yt-dlp>=2023.3.4
+pillow
+configparser
+requests
+tkinter
+urllib3>=1.26.7
