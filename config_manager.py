@@ -1,5 +1,6 @@
 import os
 import configparser
+import tempfile
 
 class ConfigManager:
     def __init__(self, config_file="config.ini"):
@@ -20,13 +21,21 @@ class ConfigManager:
     def _create_default_config(self):
         """创建默认配置"""
         if not os.path.exists(self.config_file):
+            # 使用更可靠的路径解析方式
+            try:
+                # 首先尝试使用当前目录
+                default_path = os.path.join(os.path.dirname(os.path.abspath(__file__)), "downloads")
+            except:
+                # 如果失败，使用临时目录
+                default_path = os.path.join(tempfile.gettempdir(), "YouTubeDownloader")
+            
             self.config["General"] = {
-                "DownloadPath": os.path.join(os.path.expanduser("~"), "Downloads", "YouTubeDownloader")
+                "DownloadPath": default_path
             }
             self.config["Settings"] = {
                 "DefaultQuality": "1080p",
                 "DefaultType": "视频+音频",
-                "MaxConcurrentDownloads": "3"
+                "MaxConcurrentDownloads": "10"
             }
             self.save_config()
     

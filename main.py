@@ -9,6 +9,7 @@ from config_manager import ConfigManager
 import urllib.request
 import zipfile
 import shutil
+import tempfile
 
 # 尝试导入代理管理器
 try:
@@ -454,9 +455,16 @@ def main():
     download_path = config.get_download_path()
     try:
         os.makedirs(download_path, exist_ok=True)
-    except PermissionError:
-        messagebox.showerror("权限错误", f"无法在 {download_path} 创建文件夹，请更换下载目录或以管理员身份运行。")
-        return
+    except (PermissionError, FileNotFoundError) as e:
+        # 如果创建目录失败，尝试使用临时目录
+        temp_path = os.path.join(tempfile.gettempdir(), "YouTubeDownloader")
+        try:
+            os.makedirs(temp_path, exist_ok=True)
+            config.set_download_path(temp_path)
+            download_path = temp_path
+        except Exception as e2:
+            messagebox.showerror("错误", f"无法创建下载目录：\n{str(e)}\n尝试使用临时目录也失败：\n{str(e2)}\n请手动选择下载目录。")
+            return
 
     # 检查ffmpeg
     ffmpeg_dir = os.path.abspath(os.path.dirname(__file__))
